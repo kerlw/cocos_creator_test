@@ -40,7 +40,7 @@ cc.Class({
     },
 
     nextRandomQuize() {
-        let x = utils.randomInt(1, 9)
+        let x = utils.randomInt(2, 9)
         let y = utils.randomInt(x, 9)
         let mask = utils.randomInt(0, 2)
         let answer = mask == 0 ? x : (mask == 1 ? y : x * y)

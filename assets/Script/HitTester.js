@@ -13,54 +13,53 @@ const FixedItem = require('./FixedItem')
 
 cc.Class({
     extends: cc.Component,
+    ctor() {
+        // this._dragItem = null
+        this._hitItem = null
+    },
 
     properties: {
-        draggableItem: {
-            default: null,
-            type: DraggableItem
+        hittedFixedItem: {
+            type: FixedItem,
+            get() {
+                return this._hitItem
+            },
+            set(item) {
+                if (!!this._hitItem) {
+                    this._hitItem.setHover(false)
+                }
+                if (!!item) {
+                    item.setHover(true)
+                }
+        
+                this._hitItem = item
+            }
         }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        if (!!this.draggableItem)
-            this.draggableItem.node.on('position-changed', () => this.onDraggableItemMoved())
     },
 
     start () {
-        this._hitItem = null
     },
 
-    onDraggableItemMoved() {
-        
-        if (!this.draggableItem.isDragging())
+    onDraggableItemMoved(item) {
+        if (!item.isDragging())
             return
-        // console.log("isMoving ", this.draggableItem.isDragging(), this.draggableItem.node.position)
+        // console.log("isMoving ", item.isDragging(), item.node.position)
 
         let array = this.node.getComponentsInChildren(FixedItem) || []
         let hit = null
-        for (let item of array) {
-            if (item.hitTest(this.draggableItem.node.position)) {
-                hit = item
+        for (let ele of array) {
+            if (ele.hitTest(item.node.position)) {
+                hit = ele
                 break
             }
         }
 
-        this.setHittedFixedItem(hit)
+        this.hittedFixedItem = hit
     },
-    setHittedFixedItem(item) {
-        if (item == this._hitItem)
-            return
-
-        if (!!this._hitItem) {
-            this._hitItem.setHover(false)
-        }
-        if (!!item) {
-            item.setHover(true)
-        }
-
-        this._hitItem = item
-    }
     // update (dt) {},
 });

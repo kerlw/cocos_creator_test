@@ -22,9 +22,13 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this._quizzer = this.getComponent(Quizzer)
-        this._itemPool = this.getComponent(ItemPool)
         this._gameNode = this.node.getChildByName('gameArea')
+        this._itemPool = this.getComponent(ItemPool)
+        this._quizzer = this.getComponent(Quizzer)
+        this._quize = null
+        this._hitTester = this._gameNode.getComponent(HitTester)
+
+        this.node.on('drag-end', this.onDragEnd, this)
     },
 
     start () {
@@ -34,23 +38,23 @@ cc.Class({
 
     startLoop() {
         let quize = this._quizzer.nextRandomQuize()
+        let hitTester = this._hitTester
+
+        this._quize = quize
         
         let width = this.node.parent.width
         let height = this.node.parent.height
         console.log("w, h:", width, height)
 
-        let drag = this._itemPool.getDraggableItem()
+        let drag = this._itemPool.getDraggableItem(quize.expression, hitTester)
         drag.position = cc.v2(0, 0)
-        drag.expression = quize.expression
         drag.parent = this._gameNode
-        this._gameNode.getComponent(HitTester).draggableItem = drag
 
         let len = quize.confusedAnswer.length + 1
-        let pos = utils.randomInt(0, len)
+        let pos = utils.randomInt(0, len - 1)
         let offset = 0
         for (let i = 0; i < len; i++) {
-            let fixed = this._itemPool.getFixedItem()
-            fixed.text = i == pos ? quize.answer : quize.confusedAnswer[i + offset]
+            let fixed = this._itemPool.getFixedItem(i == pos ? quize.answer : quize.confusedAnswer[i + offset])
             if (i == pos)
                 offset = -1
 
@@ -59,11 +63,30 @@ cc.Class({
         }
     },
 
-    onDragEnd(draggingItem) {
-        if (!draggingItem)
+    onDragEnd(event) {
+        console.log(event)
+        let drag = event.getUserData()
+        event.stopPropagation();
+
+        if (!drag)
             return
-        
-        
+
+        if (!!this._quize) {
+            if (this._quize.answer == this._hitTester.hittedFixedItem.text) {
+                this._itemPool.returnDraggableItem(drag.node)
+                let items = this._gameNode.getComponentsInChildren('FixedItem')
+                if (!!items && items.length > 0)
+                    items.forEach((it) => this._itemPool.returnFixedItem(it.node))
+
+                //TODO 播放动画，加分
+                this.startLoop()
+            } else {
+                //TODO 答案错误
+            }
+        }
+
+        this._hitTester.hittedFixedItem = null
+        drag.resetPosition()      
     }
 
     // update (dt) {},

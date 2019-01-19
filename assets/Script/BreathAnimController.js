@@ -33,7 +33,7 @@ cc.Class({
 
         let self = this
         cc.loader.loadRes("breath", (err, clip) => {
-            console.log("load res finished", err, clip)
+            console.log("load res finished, err: ", err)
             self._anim.addClip(clip, "breathAnim")
             if (self.animOnStart)
                 self._anim.playAdditive("breathAnim")
@@ -43,7 +43,6 @@ cc.Class({
 
     onLoad () {
         this._anim = this.getComponent(cc.Animation)
-        console.log("    anim controller", this._anim)
         if (!this._anim) {
             this._anim = this.node.addComponent(cc.Animation)
         }

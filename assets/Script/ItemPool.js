@@ -23,20 +23,32 @@ cc.Class({
         this.fixedPool = new cc.NodePool()
     },
 
-    getDraggableItem() {
+    getDraggableItem(expression, hitTester) {
+        let ret = null
         if (this.dragPool.size() > 0) {
-            return this.dragPool.get()
+            ret = this.dragPool.get()
         } else {
-            return cc.instantiate(this.draggableItemPrefab)
+            ret = cc.instantiate(this.draggableItemPrefab)
         }
+
+        let item = ret.getComponent('DraggableItem')
+        item.setExpression(expression)
+        item.setHitTester(hitTester)
+
+        console.log('get called')
+        return ret
     }, 
-    getFixedItem() {
-        // let ret = null
+    getFixedItem(itemText) {
+        let ret = null
         if (this.fixedPool.size() > 0) {
-            return this.fixedPool.get()
+            ret = this.fixedPool.get()
         } else {
-            return cc.instantiate(this.fixedItemPrefab)
+            ret = cc.instantiate(this.fixedItemPrefab)
         }
+
+        let item = ret.getComponent('FixedItem')
+        item.text = itemText
+        return ret
     },
     returnDraggableItem(item) {
         this.dragPool.put(item)

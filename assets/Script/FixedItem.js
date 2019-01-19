@@ -11,13 +11,35 @@
 cc.Class({
     extends: cc.Component,
 
-    properties: {
+    ctor() {
+        this._text = ""
+        this._bgNode = null
+        this._realNode = null
+        this._label = null
+    },
 
+    properties: {
+        text: {
+            type: String,
+            get() {
+                return this._text
+            },
+            set(value) {
+                this._text = value
+                if (!!this._label)
+                    this._label.string = value
+            }
+        }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    onLoad () {
+        this._bgNode = this.node.getChildByName("bg") || {}
+        this._realNode = this.node.getChildByName("realnode") || {}
+        this._label = this._realNode.getChildByName('label').getComponent(cc.Label)
+        this._label.string = this._text
+    },
 
     start () {
 
@@ -38,8 +60,8 @@ cc.Class({
             return
         
         this._isHover = value
-        let bgNode = this.node.getChildByName("bg") || {}
-        let realNode = this.node.getChildByName("realnode") || {}
+        let bgNode = this._bgNode
+        let realNode = this._realNode
         if (value) {
             bgNode.opacity = 50
             realNode.opacity = 150
@@ -47,6 +69,7 @@ cc.Class({
             bgNode.opacity = 10
             realNode.opacity = 255
         }
-    }
+    },
+
     // update (dt) {},
 });

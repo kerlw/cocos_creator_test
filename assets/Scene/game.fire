@@ -41,9 +41,9 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.2741357780395068,
-      "y": 0.2741357780395068,
-      "z": 0.2741357780395068
+      "x": 0.4449055989583333,
+      "y": 0.4449055989583333,
+      "z": 0.4449055989583333
     },
     "_quat": {
       "__type__": "cc.Quat",
@@ -480,7 +480,6 @@
       "__id__": 9
     },
     "_enabled": true,
-    "draggableItem": null,
     "_id": "77B3g6IOJI1ozjc7hVltEK"
   },
   {
@@ -512,7 +511,7 @@
     },
     "_enabled": true,
     "draggableItemPrefab": {
-      "__uuid__": "862793cf-928f-432a-af87-d1d2acd91ec2"
+      "__uuid__": "3e2e8184-d084-47d9-8994-4d06a201dc94"
     },
     "fixedItemPrefab": {
       "__uuid__": "34e868f4-f51d-47bb-9be0-8f0b273d0559"
