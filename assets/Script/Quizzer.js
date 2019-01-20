@@ -51,10 +51,5 @@ cc.Class({
             confusedAnswer: [answer + 1, answer - 1, answer + 10]
         }
     },
-
-    checkAnswer() {
-        return false
-    }
-
     // update (dt) {},
 });

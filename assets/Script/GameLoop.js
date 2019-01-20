@@ -71,8 +71,14 @@ cc.Class({
         if (!drag)
             return
 
+        let hit = this._hitTester.hittedFixedItem
+        let chosenAnswer = !!hit ? hit.text : null
+
+        // 无论答案是否正确，先将选中答案项重置
+        this._hitTester.hittedFixedItem = null
+
         if (!!this._quize) {
-            if (this._quize.answer == this._hitTester.hittedFixedItem.text) {
+            if (this._quize.answer == chosenAnswer) {
                 this._itemPool.returnDraggableItem(drag.node)
                 let items = this._gameNode.getComponentsInChildren('FixedItem')
                 if (!!items && items.length > 0)
@@ -80,12 +86,12 @@ cc.Class({
 
                 //TODO 播放动画，加分
                 this.startLoop()
+                return
             } else {
                 //TODO 答案错误
             }
         }
 
-        this._hitTester.hittedFixedItem = null
         drag.resetPosition()      
     }
 
