@@ -13,7 +13,8 @@ cc.Class({
 
     properties: {
         draggableItemPrefab: cc.Prefab,
-        fixedItemPrefab: cc.Prefab        
+        fixedItemPrefab: cc.Prefab,
+        addScoreItemPrefab: cc.Prefab
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -21,6 +22,7 @@ cc.Class({
     onLoad () {
         this.dragPool = new cc.NodePool()
         this.fixedPool = new cc.NodePool()
+        this.scorePool = new cc.NodePool()
     },
 
     getDraggableItem(expression, hitTester) {
@@ -50,11 +52,24 @@ cc.Class({
         item.text = itemText
         return ret
     },
+    getAddScoreItem(score) {
+        let ret = null
+        if (this.scorePool.size() > 0) {
+            ret = this.scorePool.get()
+        } else {
+            ret = cc.instantiate(this.addScoreItemPrefab)
+        }
+        ret.score = score
+        return ret
+    },
     returnDraggableItem(item) {
         this.dragPool.put(item)
     },
     returnFixedItem(item) {
         this.fixedPool.put(item)
+    },
+    returnAddScoreItem(item) {
+        this.scorePool.put(item)
     }
 
     // update (dt) {},

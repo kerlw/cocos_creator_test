@@ -81,9 +81,15 @@ cc.Class({
             if (this._quize.answer == chosenAnswer) {
                 this._itemPool.returnDraggableItem(drag.node)
                 let items = this._gameNode.getComponentsInChildren('FixedItem')
+
+                let score = this._itemPool.getAddScoreItem(10)
+                score.position = hit.node.position
+
                 if (!!items && items.length > 0)
                     items.forEach((it) => this._itemPool.returnFixedItem(it.node))
 
+                score.parent = this._gameNode
+                
                 //TODO 播放动画，加分
                 this.startLoop()
                 return
