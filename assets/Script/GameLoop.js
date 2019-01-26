@@ -17,6 +17,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        scoreNode: cc.Node
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -27,14 +28,28 @@ cc.Class({
         this._quizzer = this.getComponent(Quizzer)
         this._quize = null
         this._hitTester = this._gameNode.getComponent(HitTester)
+        this._score = null
 
         this.node.on('drag-end', this.onDragEnd, this)
+
+        this._addScoreAction = cc.sequence(
+            cc.scaleTo(0.3, 1.2, 1.2),
+            cc.spawn(
+                cc.moveTo(0.5, this.scoreNode.position),
+                cc.scaleTo(0.5, 0.5, 0.5)
+            ),
+            cc.callFunc(this.afterAddScore, this)
+        )
     },
 
     start () {
         this.startLoop()
     },
 
+    afterAddScore() {
+        this._itemPool.returnAddScoreItem(this._score)
+        this.startLoop()
+    },
 
     startLoop() {
         let quize = this._quizzer.nextRandomQuize()
@@ -82,16 +97,14 @@ cc.Class({
                 this._itemPool.returnDraggableItem(drag.node)
                 let items = this._gameNode.getComponentsInChildren('FixedItem')
 
-                let score = this._itemPool.getAddScoreItem(10)
-                score.position = hit.node.position
+                this._score = this._itemPool.getAddScoreItem(10)
+                this._score.position = hit.node.position
 
                 if (!!items && items.length > 0)
                     items.forEach((it) => this._itemPool.returnFixedItem(it.node))
 
-                score.parent = this._gameNode
-                
-                //TODO 播放动画，加分
-                this.startLoop()
+                this._score.parent = this._gameNode
+                this._score.runAction(this._addScoreAction)
                 return
             } else {
                 //TODO 答案错误

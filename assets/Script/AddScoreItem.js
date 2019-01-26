@@ -18,7 +18,7 @@ cc.Class({
     properties: {
         score: {
             default: 0,
-            type: Number,
+            type: cc.Integer,
             get() { return this._score  },
             set(value) {
                 this._score = value
