@@ -50,8 +50,6 @@ cc.Class({
         //     answer: answer + "",
         //     confusedAnswer: [answer + 1, answer - 1, answer + 10]
         // }
-        for (let i = 0; i < 400; i++)
-            console.log(utils.randomInt2(11, 99))
 
         let a, b, c
         // 20%的概率出题a+b+c中a+c=100
@@ -60,7 +58,7 @@ cc.Class({
             while (a % 10 == 0)
                 a = utils.randomInt2(11, 99)
             b = utils.randomInt2(11, 99)
-            while (b % 10 == 0)
+            while (b % 10 == 0 || b == a)
                 b = utils.randomInt2(11, 99)
             c = (10 - a % 10) + 10 * utils.randomInt2(1, 9)
         } else {
@@ -68,7 +66,7 @@ cc.Class({
             while (a % 10 == 0)
                 a = utils.randomInt2(11, 99)
             b = utils.randomInt2(11, 99)
-            while (b % 10 == 0)
+            while (b % 10 == 0 || b == a)
                 b = utils.randomInt2(11, 99)
             c = (10 - a % 10) + 10 * utils.randomInt2(1, 9)
         }

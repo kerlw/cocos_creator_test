@@ -12,18 +12,22 @@ const Quizzer = require('./Quizzer')
 const ItemPool = require('./ItemPool')
 const HitTester = require('./HitTester')
 const ScorePanel = require('./ScorePanel')
+const TimeCounter = require('./TimeCounterBar')
+
 import utils from './utils'
 
+const MAX_QUIZE_COUNT = 30
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        scoreNode: cc.Node
+        // scoreNode: cc.Node
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this._gameEngine = this.getComponent("GameEngine")
         this._gameNode = this.node.getChildByName('gameArea')
         this._itemPool = this.getComponent(ItemPool)
         this._quizzer = this.getComponent(Quizzer)
@@ -31,13 +35,21 @@ cc.Class({
         this._hitTester = this._gameNode.getComponent(HitTester)
         this._score = null
         this._scorePanel = this.getComponentInChildren(ScorePanel)
+        this._timeCounter = this.getComponentInChildren(TimeCounter)
+        this._combo = 0
+        this._total = MAX_QUIZE_COUNT
+
+        let scoreNode = this._scorePanel.node
+        this._scoreDestPos = this.node.convertToNodeSpace(scoreNode.convertToWorldSpace(scoreNode.getPosition()))
+        this._timeCounter.setDuration(10)
 
         this.node.on('drag-end', this.onDragEnd, this)
+        this.node.on('time-out', this.onTimeout, this)
 
         this._addScoreAction = cc.sequence(
             cc.scaleTo(0.2, 1.2, 1.2),
             cc.spawn(
-                cc.moveTo(0.3, this.scoreNode.position),
+                cc.moveTo(0.3, this._scoreDestPos),
                 cc.scaleTo(0.3, 1, 1)
             ),
             cc.callFunc(this.afterAddScore, this)
@@ -45,16 +57,29 @@ cc.Class({
     },
 
     start () {
-        this.startLoop()
+        // this.startLoop()
     },
 
     afterAddScore() {
         this._scorePanel.addScore(10)
         this._itemPool.returnAddScoreItem(this._score)
-        this.startLoop()
+        this._total--
+
+        if (this._total <= 0) {
+            this._gameEngine.showResult()
+        } else {
+            this.nextLoop()
+        }
     },
 
     startLoop() {
+        //reset statistics
+        this._combo = 0
+        this._total = MAX_QUIZE_COUNT
+
+        this.nextLoop()
+    },
+    nextLoop() {
         let quize = this._quizzer.nextRandomQuize()
         let hitTester = this._hitTester
 
@@ -79,6 +104,7 @@ cc.Class({
             fixed.parent = this._gameNode
             fixed.position = cc.v2(i % 2 == 0 ? 0 - width / 4 : width / 4, i >= 2 ? height / 4 : 0 - height / 4)
         }
+        this._timeCounter.reset()
     },
 
     onDragEnd(event) {
@@ -99,14 +125,22 @@ cc.Class({
             if (this._quize.answer == chosenAnswer) {
                 this._itemPool.returnDraggableItem(drag.node)
                 let items = this._gameNode.getComponentsInChildren('FixedItem')
+                
+                //停止倒计时
+                this._timeCounter.stopCount()
 
-                this._score = this._itemPool.getAddScoreItem(10)
+                if (!this._timeCounter.isTimeout()) {
+                    this._combo++
+                }
+
+                this._score = this._itemPool.getAddScoreItem(10 + 10 * (Math.floor(this._combo / 3)))
                 this._score.position = hit.node.position
 
                 if (!!items && items.length > 0)
                     items.forEach((it) => this._itemPool.returnFixedItem(it.node))
 
                 this._score.parent = this._gameNode
+                
                 this._score.runAction(this._addScoreAction)
                 return
             } else {
@@ -115,7 +149,11 @@ cc.Class({
         }
 
         drag.resetPosition()      
-    }
+    },
+
+    onTimeout(event) {
+        this._combo = 0
+    },
 
     // update (dt) {},
 });
