@@ -33,10 +33,10 @@ cc.Class({
         this.node.on('drag-end', this.onDragEnd, this)
 
         this._addScoreAction = cc.sequence(
-            cc.scaleTo(0.3, 1.2, 1.2),
+            cc.scaleTo(0.2, 1.2, 1.2),
             cc.spawn(
-                cc.moveTo(0.5, this.scoreNode.position),
-                cc.scaleTo(0.5, 0.5, 0.5)
+                cc.moveTo(0.3, this.scoreNode.position),
+                cc.scaleTo(0.3, 1, 1)
             ),
             cc.callFunc(this.afterAddScore, this)
         )
