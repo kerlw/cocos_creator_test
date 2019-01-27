@@ -11,6 +11,7 @@
 const Quizzer = require('./Quizzer')
 const ItemPool = require('./ItemPool')
 const HitTester = require('./HitTester')
+const ScorePanel = require('./ScorePanel')
 import utils from './utils'
 
 cc.Class({
@@ -29,6 +30,7 @@ cc.Class({
         this._quize = null
         this._hitTester = this._gameNode.getComponent(HitTester)
         this._score = null
+        this._scorePanel = this.getComponentInChildren(ScorePanel)
 
         this.node.on('drag-end', this.onDragEnd, this)
 
@@ -47,6 +49,7 @@ cc.Class({
     },
 
     afterAddScore() {
+        this._scorePanel.addScore(10)
         this._itemPool.returnAddScoreItem(this._score)
         this.startLoop()
     },
