@@ -34,10 +34,10 @@ cc.Class({
         }
         this._gameLoop.startLoop()
     },
-    showResult() {
+    showResult(statistics) {
         this._resultBoard = cc.instantiate(this.resultBoardPrefab)
-        this._resultBoard.getComponent('ResultBoard').init(this)
         this._resultBoard.parent = this.node
+        this._resultBoard.getComponent('ResultBoard').init(this, statistics)
     },
 
     // update (dt) {},

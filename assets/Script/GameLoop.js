@@ -36,8 +36,7 @@ cc.Class({
         this._score = null
         this._scorePanel = this.getComponentInChildren(ScorePanel)
         this._timeCounter = this.getComponentInChildren(TimeCounter)
-        this._combo = 0
-        this._total = MAX_QUIZE_COUNT
+        this.resetStatistics()
 
         let scoreNode = this._scorePanel.node
         this._scoreDestPos = this.node.convertToNodeSpace(scoreNode.convertToWorldSpace(scoreNode.getPosition()))
@@ -52,31 +51,50 @@ cc.Class({
                 cc.moveTo(0.3, this._scoreDestPos),
                 cc.scaleTo(0.3, 1, 1)
             ),
-            cc.callFunc(this.afterAddScore, this)
+            cc.callFunc(this.afterAddScore, this, true)
         )
     },
 
     start () {
-        // this.startLoop()
     },
 
-    afterAddScore() {
-        this._scorePanel.addScore(10)
-        this._itemPool.returnAddScoreItem(this._score)
-        this._total--
+    afterAddScore(right) {
+        if (right) {
+            let score = this._score.getComponent('AddScoreItem').score
+            this._scorePanel.addScore(score)
+            this._statistics.score += score
+            this._itemPool.returnAddScoreItem(this._score)
+        }
+        this._quize_done ++
 
-        if (this._total <= 0) {
-            this._gameEngine.showResult()
+        if (this._quize_done >= this._statistics.total) {
+            this._gameEngine.showResult(this._statistics)
         } else {
             this.nextLoop()
         }
     },
 
+    resetStatistics() {
+        this._statistics = {
+            score: 0,
+            combo: 0,
+            err: 0,
+            total: MAX_QUIZE_COUNT,
+            used_tm: 0,
+            quize: [],
+            max_combo: 0,
+        }
+        this._quize_done = 0
+    },
+
+    resetUI() {
+        this._scorePanel.reset()
+    },
+
     startLoop() {
         //reset statistics
-        this._combo = 0
-        this._total = MAX_QUIZE_COUNT
-
+        this.resetStatistics()
+        this.resetUI()
         this.nextLoop()
     },
     nextLoop() {
@@ -84,6 +102,8 @@ cc.Class({
         let hitTester = this._hitTester
 
         this._quize = quize
+        quize.start = new Date().getTime()
+        this._statistics.quize.push(quize)
         
         let width = this.node.parent.width
         let height = this.node.parent.height
@@ -121,34 +141,44 @@ cc.Class({
         // 无论答案是否正确，先将选中答案项重置
         this._hitTester.hittedFixedItem = null
 
-        if (!!this._quize) {
-            if (this._quize.answer == chosenAnswer) {
-                this._itemPool.returnDraggableItem(drag.node)
-                let items = this._gameNode.getComponentsInChildren('FixedItem')
-                
-                //停止倒计时
-                this._timeCounter.stopCount()
+        if (!!this._quize && !!hit) {
+            //停止倒计时
+            this._timeCounter.stopCount()
+            this._quize.chosen = chosenAnswer
+            this._quize.end = new Date().getTime()
+            this._statistics.used_tm += this._quize.end - this._quize.start
 
-                if (!this._timeCounter.isTimeout()) {
-                    this._combo++
-                }
-
-                this._score = this._itemPool.getAddScoreItem(10 + 10 * (Math.floor(this._combo / 3)))
-                this._score.position = hit.node.position
-
-                if (!!items && items.length > 0)
+            this._itemPool.returnDraggableItem(drag.node)
+            let items = this._gameNode.getComponentsInChildren('FixedItem')
+            if (!!items && items.length > 0)
                     items.forEach((it) => this._itemPool.returnFixedItem(it.node))
 
-                this._score.parent = this._gameNode
-                
-                this._score.runAction(this._addScoreAction)
-                return
-            } else {
-                //TODO 答案错误
-            }
-        }
+            if (this._quize.answer == chosenAnswer) {
+                if (!this._timeCounter.isTimeout()) {
+                    this._statistics.combo++
+                } else {
+                    if (this._statistics.combo > this._statistics.max_combo) {
+                        this._statistics.max_combo = this._statistics.combo
+                    }
+                    this._statistics.combo = 0
+                }
 
-        drag.resetPosition()      
+                this._score = this._itemPool.getAddScoreItem(10 + 10 * (Math.floor(this._statistics.combo / 3)))
+                this._score.position = hit.node.position
+
+                this._score.parent = this._gameNode
+                this._score.runAction(this._addScoreAction)
+            } else {
+                if (this._statistics.combo > this._statistics.max_combo) {
+                    this._statistics.max_combo = this._statistics.combo
+                }
+                this._statistics.combo = 0
+                this._statistics.err++
+                //TODO 答案错误的动画提示
+                this.afterAddScore()
+            }
+        } else 
+            drag.resetPosition()      
     },
 
     onTimeout(event) {

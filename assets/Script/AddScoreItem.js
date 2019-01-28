@@ -22,7 +22,7 @@ cc.Class({
             set(value) {
                 this._score = value
                 if (!!this._label)
-                    this._label.string = this._score + ""
+                    this._label.string = `+${value}`
             }
         }
     },
@@ -32,7 +32,7 @@ cc.Class({
     // onLoad () {},
 
     start () {
-        this._label = this.node.getChildByName('label')
+        this._label = this.node.getChildByName('label').getComponent(cc.Label)
         this._label.string = this._score + ""
     },
     unuse() {

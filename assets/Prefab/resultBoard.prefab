@@ -163,7 +163,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "fce94d3c-d383-46f5-abe0-8dff425318f8"
+      "__uuid__": "30c45cc2-d952-4ee0-b3af-2e9a5c2fcfba"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -378,7 +378,7 @@
     "_N$horizontalAlign": 2,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
-    "_N$overflow": 3,
+    "_N$overflow": 0,
     "_id": ""
   },
   {

@@ -59,7 +59,8 @@ cc.Class({
         } else {
             ret = cc.instantiate(this.addScoreItemPrefab)
         }
-        ret.score = score
+        ret.getComponent('AddScoreItem').score = score
+        // ret.score = score
         return ret
     },
     returnDraggableItem(item) {
