@@ -37,7 +37,7 @@
       }
     ],
     "_active": true,
-    "_level": 0,
+    "_level": 1,
     "_components": [
       {
         "__id__": 24
@@ -372,10 +372,8 @@
     "_fontSize": 28,
     "_lineHeight": 36,
     "_enableWrapText": true,
-    "_N$file": {
-      "__uuid__": "87482134-04e5-4b76-aac0-083ad1d459dc"
-    },
-    "_isSystemFontUsed": false,
+    "_N$file": null,
+    "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_N$horizontalAlign": 2,
     "_N$verticalAlign": 1,
@@ -474,10 +472,8 @@
     "_fontSize": 20,
     "_lineHeight": 36,
     "_enableWrapText": true,
-    "_N$file": {
-      "__uuid__": "87482134-04e5-4b76-aac0-083ad1d459dc"
-    },
-    "_isSystemFontUsed": false,
+    "_N$file": null,
+    "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
@@ -748,10 +744,8 @@
     "_fontSize": 24,
     "_lineHeight": 40,
     "_enableWrapText": false,
-    "_N$file": {
-      "__uuid__": "87482134-04e5-4b76-aac0-083ad1d459dc"
-    },
-    "_isSystemFontUsed": false,
+    "_N$file": null,
+    "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
