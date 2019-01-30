@@ -13,7 +13,18 @@
   ],
   "design-resolution-height": 960,
   "design-resolution-width": 640,
-  "excluded-modules": [],
+  "excluded-modules": [
+    "TiledMap",
+    "Spine Skeleton",
+    "DragonBones",
+    "VideoPlayer",
+    "WebView",
+    "Collider",
+    "Physics",
+    "Native NetWork",
+    "3D",
+    "Mesh"
+  ],
   "fit-height": false,
   "fit-width": true,
   "group-list": [
